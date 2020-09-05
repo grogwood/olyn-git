@@ -11,7 +11,7 @@ data_bag('git_repos').each do |repo_item|
   repo_user = data_bag_item('system_users', repo[:worktree][:user_data_bag_item])
 
   # Specify the base folder for this repo
-  git_base      = "#{node[:olyn_git][:repos_path]}#{repo[:id]}/"
+  git_base = "#{node[:olyn_git][:repos_path]}#{repo[:id]}/"
 
   # Set the default branch if the repo didn't specify one
   repo[:branch] = server[:options][:git][:default_branch] if repo[:branch].nil?
