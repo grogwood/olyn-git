@@ -2,10 +2,10 @@
 default[:olyn_git][:user][:git][:data_bag_item] = 'system_admin'
 
 # Path to the main Git repos directory
-default[:olyn_git][:repo][:dir] = "#{Chef::Config[:olyn_application_data_path]}/git-repos"
+default[:olyn_git][:repo][:dir] = "#{Chef::Config[:olyn_application_data_path]}/git/repos"
 
 # Path to the Git build tracking directory
-default[:olyn_git][:build][:dir] = "#{Chef::Config[:olyn_application_data_path]}/git-build"
+default[:olyn_git][:build][:dir] = "#{Chef::Config[:olyn_application_data_path]}/git/build"
 
 # Command for running Composer after sync
 default[:olyn_git][:build][:composer][:command] = 'composer install --no-dev'
