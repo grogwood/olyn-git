@@ -6,7 +6,7 @@ license 'GPL-3.0'
 supports 'debian', '>= 10'
 source_url 'https://gitlab.com/olyn/olyn_git'
 description 'Installs and configures Git and remote repos locally on the server'
-version '1.0.1'
+version '1.0.2'
 
 provides 'olyn_git::default'
 provides 'olyn_git::build'
