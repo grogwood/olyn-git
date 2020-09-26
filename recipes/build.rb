@@ -36,8 +36,8 @@ data_bag('git_repos').each do |repo_item|
       group repo_user[:groups]['primary']
       environment({ 'HOME' => "/home/#{repo_user[:username]}",
                     'USER' => repo_user[:username] })
-      creates build_tracker_file
-      action :run
+      action :nothing
+      subscribes :run, "file[git_build_tracker_#{repo[:id]}]", :delayed
     end
 
   # If the repo needs to run Berkshelf after a sync
@@ -51,8 +51,8 @@ data_bag('git_repos').each do |repo_item|
       group repo_user[:groups]['primary']
       environment({ 'HOME' => "/home/#{repo_user[:username]}",
                     'USER' => repo_user[:username] })
-      creates build_tracker_file
-      action :run
+      action :nothing
+      subscribes :run, "file[git_build_tracker_#{repo[:id]}]", :delayed
     end
 
   end
