@@ -14,3 +14,6 @@ include_recipe 'olyn_git::repos' if repos
 
 # Sync and checkout repos
 include_recipe 'olyn_git::sync' if repos
+
+# Build Composer and Berkshelf dependencies
+include_recipe 'olyn_git::build' if repos

@@ -4,7 +4,7 @@ package 'git' do
 end
 
 # Load the git user data bag item
-git_user = data_bag_item('system_users', node[:olyn_git][:user_data_bag_item])
+git_user = data_bag_item('system_users', node[:olyn_git][:user][:git][:data_bag_item])
 
 # Configure the package
 template '/etc/gitconfig' do
@@ -19,10 +19,10 @@ template '/etc/gitconfig' do
 end
 
 # Create the base repos folder
-directory node[:olyn_git][:repos_path] do
+directory node[:olyn_git][:repo][:dir] do
   mode 0755
-  owner git_user[:username]
-  group git_user[:groups]['primary']
+  owner 'root'
+  group 'root'
   recursive true
   action :create
 end

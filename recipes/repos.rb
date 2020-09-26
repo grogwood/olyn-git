@@ -8,7 +8,7 @@ data_bag('git_repos').each do |repo_item|
   repo_user = data_bag_item('system_users', repo[:worktree][:user_data_bag_item])
 
   # Specify the base folder for this repo
-  git_base = "#{node[:olyn_git][:repos_path]}#{repo[:id]}/"
+  git_base = "#{node[:olyn_git][:repo][:dir]}/#{repo[:id]}/"
 
   # Create the base repo folder
   directory git_base do
@@ -35,7 +35,7 @@ data_bag('git_repos').each do |repo_item|
     user repo_user[:username]
     group repo_user[:groups]['primary']
     action :run
-    creates "#{repo[:worktree][:path]}.git"
+    creates "#{repo[:worktree][:path]}/.git"
   end
 
 end
