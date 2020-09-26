@@ -11,20 +11,10 @@ data_bag('git_repos').each do |repo_item|
   repo_user = data_bag_item('system_users', repo[:worktree][:user_data_bag_item])
 
   # Specify the base folder for this repo
-  git_base = "#{node[:olyn_git][:repos_path]}#{repo[:id]}/"
+  git_base = "#{node[:olyn_git][:repo][:dir]}/#{repo[:id]}/"
 
   # Set the default branch if the repo didn't specify one
   repo[:branch] = server[:options][:git][:default_branch] if repo[:branch].nil?
-
-  # Set the permissions for this entire worktree
-  bash "git_base_owner_#{repo[:id]}" do
-    code <<-ENDOFCODE
-      # Chown the entire base folder
-      chown -R #{repo_user[:username]} #{repo[:worktree][:path]}
-      chgrp -R #{repo_user[:groups]['primary']} #{repo[:worktree][:path]}
-    ENDOFCODE
-    action :nothing
-  end
 
   # Sync the git repo
   git "sync_#{repo[:id]}" do
@@ -40,6 +30,18 @@ data_bag('git_repos').each do |repo_item|
     action :sync
     only_if { repo[:remote][:sync] && repo_user[:options]['ssh']['enabled'] && repo_user[:options]['ssh']['wrapper']['enabled'] }
     notifies :run, "bash[git_base_owner_#{repo[:id]}]", :before
+    notifies :run, "bash[git_clean_#{repo[:id]}]", :immediately
+    notifies :delete, "file[git_build_tracker_#{repo[:id]}]", :immediately
+  end
+
+  # Set the permissions for the entire worktree
+  bash "git_base_owner_#{repo[:id]}" do
+    code <<-ENDOFCODE
+      # Chown the entire base folder
+      chown -R #{repo_user[:username]} #{repo[:worktree][:path]}
+      chgrp -R #{repo_user[:groups]['primary']} #{repo[:worktree][:path]}
+    ENDOFCODE
+    action :nothing
   end
 
   # Force a checkout and clean
@@ -58,14 +60,13 @@ data_bag('git_repos').each do |repo_item|
     user repo_user[:username]
     group repo_user[:groups]['primary']
     action :nothing
-    subscribes :run, "git[sync_#{repo[:id]}]", :immediately
   end
 
   # Loop through each realm in the worktree
   repo[:worktree][:realms].each do |realm|
 
     # Specify the full realm path
-    realm_base = "#{repo[:worktree][:path]}#{realm[:path]}"
+    realm_base = "#{repo[:worktree][:path]}/#{realm[:path]}"
 
     # Determine the owner
     realm[:user]  = realm[:root_owned] ? 'root' : repo_user[:username]
@@ -96,4 +97,5 @@ data_bag('git_repos').each do |repo_item|
     end
 
   end
+
 end
