@@ -26,7 +26,7 @@ data_bag('git_repos').each do |repo_item|
   build_tracker_file = "#{node[:olyn_git][:build][:dir]}/#{repo[:id]}.build"
 
   # If the repo needs to run Composer after a sync
-  if repo[:build][:is_composer]
+  if repo[:build][:enabled] && repo[:build][:is_composer]
 
     # Run composer
     execute "composer_#{repo[:id]}" do
@@ -41,7 +41,7 @@ data_bag('git_repos').each do |repo_item|
     end
 
   # If the repo needs to run Berkshelf after a sync
-  elsif repo[:build][:is_berkshelf]
+  elsif repo[:build][:enabled] && repo[:build][:is_berkshelf]
 
     # Run Berkshelf
     execute "berkshelf_#{repo[:id]}" do
